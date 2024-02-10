@@ -51,11 +51,11 @@ resource "aws_route_table" "nat" {
 }
 
 
-# Private instance association with NAT GW
-resource "aws_route_table_association" "nat-rt" {
-  subnet_id      = aws_subnet.private_subnet1.id
-  route_table_id = aws_route_table.nat.id
-}
+# # Private instance association with NAT GW
+# resource "aws_route_table_association" "nat-rt" {
+#   subnet_id      = aws_subnet.private_subnet1.id
+#   route_table_id = aws_route_table.nat.id
+# }
 
 # NACLs
 

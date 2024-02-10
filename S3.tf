@@ -1,13 +1,13 @@
 # S3 bucket
-resource "aws_s3_bucket" "mproject_bucket2024" {
-  bucket = "meerim_project_bucket2024"
+resource "aws_s3_bucket" "meerimprojectbucket2024" {
+  bucket = "meerimprojectbucket2024"
 
 
 }
 
 #s3 access bloc policy
 resource "aws_s3_bucket_public_access_block" "block-policy" {
-  bucket = aws_s3_bucket.mproject_bucket2024.id
+  bucket = aws_s3_bucket.meerimprojectbucket2024.id
 
   block_public_acls       = true
   block_public_policy     = true
@@ -16,7 +16,7 @@ resource "aws_s3_bucket_public_access_block" "block-policy" {
 }
 # s3 bucket policy
 resource "aws_s3_bucket_policy" "bucket_policy" {
-  bucket = aws_s3_bucket.mproject_bucket2024.id
+  bucket = aws_s3_bucket.meerimprojectbucket2024.id
   policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
@@ -28,7 +28,7 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
           "s3:GetObject"
         ],
         "Resource" : [
-          "arn:aws:s3:::mproject_bucket2024/*"
+          "arn:aws:s3:::meerimprojectbucket2024/*"
         ]
       }
     ]
@@ -65,7 +65,7 @@ data "aws_iam_policy_document" "replication" {
       "s3:ListBucket",
     ]
 
-    resources = [aws_s3_bucket.mproject_bucket2024.arn]
+    resources = [aws_s3_bucket.meerimprojectbucket2024.arn]
   }
 
   statement {
@@ -77,7 +77,7 @@ data "aws_iam_policy_document" "replication" {
       "s3:GetObjectVersionTagging",
     ]
 
-    resources = ["${aws_s3_bucket.mproject_bucket2024.arn}/*"]
+    resources = ["${aws_s3_bucket.meerimprojectbucket2024.arn}/*"]
   }
 
   statement {
@@ -89,7 +89,7 @@ data "aws_iam_policy_document" "replication" {
       "s3:ReplicateTags",
     ]
 
-    resources = ["${aws_s3_bucket.mproject_bucket2_2024.arn}/*"]
+    resources = ["${aws_s3_bucket.meerimprojectbucket22024.arn}/*"]
   }
 }
 
@@ -103,12 +103,12 @@ resource "aws_iam_role_policy_attachment" "replication" {
   policy_arn = aws_iam_policy.replication.arn
 }
 
-resource "aws_s3_bucket" "mproject_bucket2_2024" {
-  bucket = "mproject_bucket2_2024"
+resource "aws_s3_bucket" "meerimprojectbucket22024" {
+  bucket = "meerimprojectbucket22024"
 }
 
 resource "aws_s3_bucket_versioning" "v-mproject_bucket2_2024" {
-  bucket = aws_s3_bucket.mproject_bucket2_2024.id
+  bucket = aws_s3_bucket.meerimprojectbucket22024.id
   versioning_configuration {
     status = "Enabled"
   }
@@ -116,17 +116,17 @@ resource "aws_s3_bucket_versioning" "v-mproject_bucket2_2024" {
 
 resource "aws_s3_bucket" "source-bucket" {
   #   provider = aws.var.region
-  bucket = "mproject_bucket2024"
+  bucket = "meerimprojectbucket2024"
 }
 
 resource "aws_s3_bucket_acl" "source_bucket_acl" {
-  bucket = aws_s3_bucket.mproject_bucket2024.id
+  bucket = aws_s3_bucket.meerimprojectbucket2024.id
   acl    = "private"
 }
 
 
 resource "aws_s3_bucket_versioning" "versioning_mproject_bucket2024" {
-  bucket = aws_s3_bucket.mproject_bucket2024.id
+  bucket = aws_s3_bucket.meerimprojectbucket2024.id
   versioning_configuration {
     status = "Enabled"
   }
@@ -138,7 +138,7 @@ resource "aws_s3_bucket_replication_configuration" "replication-config" {
   depends_on = [aws_s3_bucket_versioning.versioning_mproject_bucket2024]
 
   role   = aws_iam_role.replication.arn
-  bucket = aws_s3_bucket.mproject_bucket2024.id
+  bucket = aws_s3_bucket.meerimprojectbucket2024.id
 
   rule {
     id = "First project"
@@ -150,7 +150,7 @@ resource "aws_s3_bucket_replication_configuration" "replication-config" {
     status = "Enabled"
 
     destination {
-      bucket        = aws_s3_bucket.mproject_bucket2_2024.arn
+      bucket        = aws_s3_bucket.meerimprojectbucket22024.arn
       storage_class = "STANDARD"
     }
   }

@@ -20,52 +20,20 @@ data "aws_ami" "ubuntu" {
 resource "aws_iam_role" "EC2_role" {
   name = "EC2_role"
 
-  # Terraform's "jsonencode" function converts a
-  # Terraform expression result to valid JSON syntax.
+#Permission are written in JSON - can be found in AWS
   assume_role_policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Action": "ec2:*",
-            "Effect": "Allow",
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": "elasticloadbalancing:*",
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": "cloudwatch:*",
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": "autoscaling:*",
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": "iam:CreateServiceLinkedRole",
-            "Resource": "*",
-            "Condition": {
-                "StringEquals": {
-                    "iam:AWSServiceName": [
-                        "autoscaling.amazonaws.com",
-                        "ec2scheduled.amazonaws.com",
-                        "elasticloadbalancing.amazonaws.com",
-                        "spot.amazonaws.com",
-                        "spotfleet.amazonaws.com",
-                        "transitgateway.amazonaws.com"
-                    ]
-                }
-            }
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "ec2.amazonaws.com"
         }
+      },
     ]
-})
-
-  tags = local.tags
+  })
 }
 
 #This is my Read permissions on all EC2 instances policy
@@ -223,10 +191,7 @@ resource "aws_launch_template" "my-launch-temp-pub" {
   image_id      = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
   user_data     = filebase64("web-script.sh")
-  network_interfaces {
-    subnet_id       = aws_subnet.public_subnet1.id
-    security_groups = [aws_security_group.web-sg.id]
-  }
+  vpc_security_group_ids = [aws_security_group.web-sg.id]
 
   block_device_mappings {
     device_name = "/dev/sdf"
@@ -258,11 +223,7 @@ resource "aws_launch_template" "my-launch-temp-private" {
   image_id      = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
   key_name      = aws_key_pair.deployer.key_name
-
-  network_interfaces {
-    subnet_id       = aws_subnet.private_subnet1.id
-    security_groups = [aws_security_group.bastion_host_sg.id]
-  }
+  vpc_security_group_ids = [aws_security_group.bastion_host_sg.id]
 
   block_device_mappings {
     device_name = "/dev/sdf"
@@ -288,7 +249,8 @@ resource "aws_autoscaling_group" "asg-private" {
 
 # create keypair 
 resource "aws_key_pair" "deployer" {
-  key_name   = "class"
-  public_key = filebase64("./yes.pub")
+  key_name   = "project"
+  public_key = file("./yes.pub")
 }
+
 

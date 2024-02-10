@@ -1,7 +1,7 @@
 # RDS DB config
 # DB subnet
 resource "aws_db_subnet_group" "db-subnet" {
-  subnet_ids = [aws_subnet.private_subnet1db, aws_subnet.private_subnet2db]
+  subnet_ids = [aws_subnet.private_subnet1db.id, aws_subnet.private_subnet2db.id]
   name       = "db subnet"
 }
 # RDS config

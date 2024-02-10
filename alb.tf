@@ -5,12 +5,12 @@ resource "aws_lb" "alb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb-sg.id]
-  subnets            = [aws_subnet.public_subnet1.id, aws_subnet.public_subnet2]
+  subnets            = [aws_subnet.public_subnet1.id, aws_subnet.public_subnet2.id]
 
   enable_deletion_protection = true
 
   access_logs {
-    bucket  = aws_s3_bucket.mproject_bucket2024.id
+    bucket  = aws_s3_bucket.meerimprojectbucket2024.id
     prefix  = "lb-logs"
     enabled = true
   }
