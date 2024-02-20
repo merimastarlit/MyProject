@@ -1,13 +1,12 @@
 # S3 bucket
-resource "aws_s3_bucket" "meerimprojectbucket2024" {
-  bucket = "meerimprojectbucket2024"
-
-
+resource "aws_s3_bucket" "meerimprojectbucket112024" {
+  bucket = "meerimprojectbucket112024"
+  
 }
 
-#s3 access bloc policy
+#s3 access block policy
 resource "aws_s3_bucket_public_access_block" "block-policy" {
-  bucket = aws_s3_bucket.meerimprojectbucket2024.id
+  bucket = aws_s3_bucket.meerimprojectbucket112024.id
 
   block_public_acls       = true
   block_public_policy     = true
@@ -15,26 +14,26 @@ resource "aws_s3_bucket_public_access_block" "block-policy" {
   restrict_public_buckets = true
 }
 # s3 bucket policy
-resource "aws_s3_bucket_policy" "bucket_policy" {
-  bucket = aws_s3_bucket.meerimprojectbucket2024.id
-  policy = jsonencode({
-    "Version" : "2012-10-17",
-    "Statement" : [
-      {
-        "Sid" : "PublicReadGetObject",
-        "Effect" : "Allow",
-        "Principal" : "*",
-        "Action" : [
-          "s3:GetObject"
-        ],
-        "Resource" : [
-          "arn:aws:s3:::meerimprojectbucket2024/*"
-        ]
-      }
-    ]
-    }
-  )
-}
+# resource "aws_s3_bucket_policy" "bucket_policy" {
+#   bucket = aws_s3_bucket.meerimprojectbucket112024.id
+#   policy = jsonencode({
+#     "Version" : "2012-10-17",
+#     "Statement" : [
+#       {
+#         "Sid" : "PublicReadGetObject",
+#         "Effect" : "Allow",
+#         "Principal" : "*",
+#         "Action" : [
+#           "s3:GetObject"
+#         ],
+#         "Resource" : [
+#           "arn:aws:s3:::meerimprojectbucket112024/*"
+#         ]
+#       }
+#     ]
+#     }
+#   )
+# }
 
 
 data "aws_iam_policy_document" "assume_role" {
@@ -51,6 +50,7 @@ data "aws_iam_policy_document" "assume_role" {
 }
 
 # s3 Replica
+
 resource "aws_iam_role" "replication" {
   name               = "tf-iam-role-replication-12345"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
@@ -65,7 +65,7 @@ data "aws_iam_policy_document" "replication" {
       "s3:ListBucket",
     ]
 
-    resources = [aws_s3_bucket.meerimprojectbucket2024.arn]
+    resources = [aws_s3_bucket.meerimprojectbucket112024.arn]
   }
 
   statement {
@@ -77,7 +77,7 @@ data "aws_iam_policy_document" "replication" {
       "s3:GetObjectVersionTagging",
     ]
 
-    resources = ["${aws_s3_bucket.meerimprojectbucket2024.arn}/*"]
+    resources = ["${aws_s3_bucket.meerimprojectbucket112024.arn}/*"]
   }
 
   statement {
@@ -105,6 +105,7 @@ resource "aws_iam_role_policy_attachment" "replication" {
 
 resource "aws_s3_bucket" "meerimprojectbucket22024" {
   bucket = "meerimprojectbucket22024"
+
 }
 
 resource "aws_s3_bucket_versioning" "v-mproject_bucket2_2024" {
@@ -114,31 +115,32 @@ resource "aws_s3_bucket_versioning" "v-mproject_bucket2_2024" {
   }
 }
 
-resource "aws_s3_bucket" "source-bucket" {
-  #   provider = aws.var.region
-  bucket = "meerimprojectbucket2024"
-}
+# resource "aws_s3_bucket" "source-bucket" {
+#   #   provider = aws.var.region
+#   bucket = "meerimprojectbucket112024"
+# }
 
-resource "aws_s3_bucket_acl" "source_bucket_acl" {
-  bucket = aws_s3_bucket.meerimprojectbucket2024.id
-  acl    = "private"
-}
+# resource "aws_s3_bucket_acl" "source_bucket_acl" {
+#   bucket = aws_s3_bucket.meerimprojectbucket112024.id
+#   acl    = "private"
+# }
 
 
 resource "aws_s3_bucket_versioning" "versioning_mproject_bucket2024" {
-  bucket = aws_s3_bucket.meerimprojectbucket2024.id
+  bucket = aws_s3_bucket.meerimprojectbucket112024.id
   versioning_configuration {
     status = "Enabled"
   }
 }
 
 resource "aws_s3_bucket_replication_configuration" "replication-config" {
+  
   #   provider = aws.var.region
   # Must have bucket versioning enabled first
   depends_on = [aws_s3_bucket_versioning.versioning_mproject_bucket2024]
 
   role   = aws_iam_role.replication.arn
-  bucket = aws_s3_bucket.meerimprojectbucket2024.id
+  bucket = aws_s3_bucket.meerimprojectbucket112024.id
 
   rule {
     id = "First project"
@@ -148,6 +150,10 @@ resource "aws_s3_bucket_replication_configuration" "replication-config" {
     }
 
     status = "Enabled"
+
+     delete_marker_replication {
+      status = "Enabled"
+    }
 
     destination {
       bucket        = aws_s3_bucket.meerimprojectbucket22024.arn

@@ -23,7 +23,7 @@ terraform {
 }
 
 locals {
-  env = "prod"
+  env = "first_project"
   tags = {
     env        = "${local.env}"
     created_by = "devops"

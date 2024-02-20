@@ -5,18 +5,16 @@ resource "aws_lb" "alb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb-sg.id]
-  subnets            = [aws_subnet.public_subnet1.id, aws_subnet.public_subnet2.id]
+  subnets            = [aws_subnet.private_subnet1.id, aws_subnet.private_subnet2.id]
+  
 
-  enable_deletion_protection = true
+  enable_deletion_protection = false
 
-  access_logs {
-    bucket  = aws_s3_bucket.meerimprojectbucket2024.id
-    prefix  = "lb-logs"
-    enabled = true
-  }
 
   tags = local.tags
 }
+
+
 #LB target group
 resource "aws_lb_target_group" "lb_tg" {
   name     = "lb-tg"
@@ -35,14 +33,16 @@ resource "aws_lb_target_group" "lb_tg" {
   }
 }
 
-resource "aws_lb_target_group_attachment" "lb_tg_att" {
-  target_group_arn = aws_lb_target_group.lb_tg.arn
-  target_id        = aws_instance.public_instance.id
-  port             = 80
+#ALB target group attachment
 
-}
+# resource "aws_lb_target_group_attachment" "lb_tg_att" {
+#   target_group_arn = aws_lb_target_group.lb_tg.arn
+#   target_id        = aws_instance.public_instance.id
+#   port             = 80
 
-#create a listener on port 80 with redirect action
+# }
+
+#create a listener on port 80 with forward action
 resource "aws_lb_listener" "alb_http_listener" {
   load_balancer_arn = aws_lb.alb.arn
   port              = 80
@@ -62,7 +62,7 @@ resource "aws_lb_listener" "alb_http_listener" {
 
 # Register the instances with the target group -web tier
 resource "aws_autoscaling_attachment" "auto_scaling_attach" {
-  autoscaling_group_name = aws_autoscaling_group.asg-pub.name
+  autoscaling_group_name = aws_autoscaling_group.asg.name
   lb_target_group_arn    = aws_lb_target_group.lb_tg.arn
 }
 

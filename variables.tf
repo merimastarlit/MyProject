@@ -59,25 +59,31 @@ variable "vpcname" {
   description = "description"
 }
 
-variable "db_username" {
-  description = "Database administrator username"
-  default     = "admin"
-  type        = string
-  sensitive   = true
+variable "launch_temp_name" {
+  type = string
+  default = "From_launch_template"
+  description = "ec2 instances from launch template"
 }
 
-variable "db_password" {
-  description = "Database administrator password"
-  default     = "Temppass11$$"
-  type        = string
-  sensitive   = true
-}
+# variable "db_username" {
+#   description = "Database administrator username"
+#   default     = "admin"
+#   type        = string
+#   sensitive   = true
+# }
+
+# variable "db_password" {
+#   description = "Database administrator password"
+#   default     = "Temppass11$$"
+#   type        = string
+#   sensitive   = true
+# }
 
 
 #VPC cidr block
 
 variable "vpc_cidr" {
-  default     = "10.0.0.0/24"
+  default     = "10.0.0.0/16"
   description = "VPC_cidr block"
   type        = string
 }
@@ -85,7 +91,7 @@ variable "vpc_cidr" {
 ## Presentation Tier CIDR Block 1 ##
 ##################################
 variable "public-subnet1-cidr" {
-  default     = "10.0.0.0/28"
+  default     = "10.0.0.0/20"
   description = "public_web_subnet1"
   type        = string
 }
@@ -93,7 +99,7 @@ variable "public-subnet1-cidr" {
 ## Presentation Tier CIDR Block 2##
 ###############################
 variable "public-subnet2-cidr" {
-  default     = "10.0.0.16/28"
+  default     = "10.0.16.0/20"
   description = "public_web_subnet2"
   type        = string
 }
@@ -101,7 +107,7 @@ variable "public-subnet2-cidr" {
 ## App tier CIDR Block 1##
 #########################
 variable "private-subnet1-cidr" {
-  default     = "10.0.0.128/28"
+  default     = "10.0.128.0/20"
   description = "private_app_subnet1"
   type        = string
 }
@@ -109,7 +115,7 @@ variable "private-subnet1-cidr" {
 ## App tier CIDR Block 2 ##
 ###########################
 variable "private-subnet2-cidr" {
-  default     = "10.0.0.144/28"
+  default     = "10.0.144.0/20"
   description = "private_app_subnet2"
   type        = string
 }
@@ -117,7 +123,7 @@ variable "private-subnet2-cidr" {
 ## DB CIDR Block 1 ##
 ####################
 variable "private-subnet1db-cidr" {
-  default     = "10.0.0.160/28"
+  default     = "10.0.160.0/20"
   description = "private_db_subnet1"
   type        = string
 }
@@ -125,7 +131,7 @@ variable "private-subnet1db-cidr" {
 ## DB CIDR Block 2 ##
 ####################
 variable "private-subnet2db-cidr" {
-  default     = "10.0.0.176/28"
+  default     = "10.0.176.0/20"
   description = "private_db_subnet2"
   type        = string
 }

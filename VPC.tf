@@ -26,6 +26,9 @@ resource "aws_internet_gateway" "igw" {
 }
 
 
+
+
+
 # NAT Gateway
 
 resource "aws_eip" "nat-gateway" {
@@ -41,14 +44,6 @@ resource "aws_nat_gateway" "nat" {
   depends_on = [aws_internet_gateway.igw]
 }
 
-resource "aws_route_table" "nat" {
-  vpc_id = aws_vpc.the_vpc.id
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat.id
-  }
-  tags = local.tags
-}
 
 
 # # Private instance association with NAT GW
@@ -59,35 +54,66 @@ resource "aws_route_table" "nat" {
 
 # NACLs
 
-resource "aws_network_acl" "nacl" {
-  vpc_id = aws_vpc.the_vpc.id
+# resource "aws_network_acl" "nacl1" {
+#   vpc_id = aws_vpc.the_vpc.id
 
-  egress {
-    protocol   = "tcp"
-    rule_no    = 200
-    action     = "allow"
-    cidr_block = "10.3.0.0/18"
-    from_port  = 443
-    to_port    = 443
-  }
+#   egress {
+#     protocol   = "tcp"
+#     rule_no    = 100
+#     action     = "allow"
+#     cidr_block = var.public-subnet1-cidr
+#     from_port  = 443
+#     to_port    = 443
+#   }
 
-  ingress {
-    protocol   = "tcp"
-    rule_no    = 100
-    action     = "allow"
-    cidr_block = "10.3.0.0/18"
-    from_port  = 80
-    to_port    = 80
-  }
+#   ingress {
+#     protocol   = "tcp"
+#     rule_no    = 100
+#     action     = "allow"
+#     cidr_block = var.public-subnet1-cidr
+#     from_port  = 80
+#     to_port    = 80
+#   }
 
-  tags = local.tags
-}
+#   tags = local.tags
+# }
 
 
-resource "aws_network_acl_association" "private_nacl_association" {
-  network_acl_id = aws_network_acl.nacl.id
-  subnet_id      = aws_subnet.public_subnet1.id
-}
+# resource "aws_network_acl_association" "private_nacl_association1" {
+#   network_acl_id = aws_network_acl.nacl1.id
+#   subnet_id      = aws_subnet.public_subnet1.id
+# }
+
+
+# resource "aws_network_acl" "nacl2" {
+#   vpc_id = aws_vpc.the_vpc.id
+
+#   egress {
+#     protocol   = "tcp"
+#     rule_no    = 200
+#     action     = "allow"
+#     cidr_block = var.public-subnet2-cidr
+#     from_port  = 443
+#     to_port    = 443
+#   }
+
+#   ingress {
+#     protocol   = "tcp"
+#     rule_no    = 100
+#     action     = "allow"
+#     cidr_block = var.public-subnet2-cidr
+#     from_port  = 80
+#     to_port    = 80
+#   }
+
+#   tags = local.tags
+# }
+
+
+# resource "aws_network_acl_association" "private_nacl_association2" {
+#   network_acl_id = aws_network_acl.nacl2.id
+#   subnet_id      = aws_subnet.public_subnet2.id
+# }
 
 
 
@@ -125,7 +151,7 @@ resource "aws_subnet" "private_subnet1" {
   vpc_id                  = aws_vpc.the_vpc.id
   cidr_block              = var.private-subnet1-cidr
   availability_zone       = "${var.region}a"
-  map_public_ip_on_launch = false
+  map_public_ip_on_launch = true
 
   tags = local.tags
 }
@@ -136,7 +162,7 @@ resource "aws_subnet" "private_subnet2" {
   vpc_id                  = aws_vpc.the_vpc.id
   cidr_block              = var.private-subnet2-cidr
   availability_zone       = "${var.region}b"
-  map_public_ip_on_launch = false
+  map_public_ip_on_launch = true
 
   tags = local.tags
 }
@@ -204,6 +230,7 @@ resource "aws_route_table" "private_rt" {
 
   tags = local.tags
 }
+
 
 # Route table association with 1st private subnet
 
